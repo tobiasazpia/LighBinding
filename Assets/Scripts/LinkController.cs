@@ -57,6 +57,7 @@ public class LinkController : MonoBehaviour
 							isADynamic = false;
 							posA = new Vector2 (cam.ScreenToWorldPoint (Input.mousePosition).x, cam.ScreenToWorldPoint (Input.mousePosition).y);
 							transform.position = new Vector3 (posA.x, posA.y, 0);
+							objsLinked++;
 							//Debug.Log ("A fixed");
 						} else {
 							isADynamic = true;
@@ -64,6 +65,7 @@ public class LinkController : MonoBehaviour
 							linkedA = hit.collider.gameObject;
 							rbA = hit.collider.attachedRigidbody;
 							posA = new Vector2 (hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y);
+							objsLinked++;
 						}
 					} else {
 						//TO DO - Add code to prevent linking to self, and linking between two fixed objects
@@ -71,19 +73,25 @@ public class LinkController : MonoBehaviour
 						colB.isTrigger = true;
 						colB.size = new Vector2 (0.3f, 0.3f);
 						if (hit.collider.gameObject.tag == "Fixed Obj") {
+							if(isADynamic){
 							isBDynamic = false;
 							posB = new Vector2 (cam.ScreenToWorldPoint (Input.mousePosition).x, cam.ScreenToWorldPoint (Input.mousePosition).y);
-							//Debug.Log ("B fixed");
+								colB.offset = posB - posA;
+								objsLinked++;
+							}//Debug.Log ("B fixed");
 						} else {
 							isBDynamic = true;
 							//Debug.Log ("B linked");
 							linkedB = hit.collider.gameObject;	
 							rbB = hit.collider.attachedRigidbody;
 							posB = new Vector2 (hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y);
+							colB.offset = posB - posA;
+							if (linkedA != linkedB) objsLinked++;
+							else posB = Vector2.zero;
 						}
-						colB.offset = posB - posA;
+
 					}
-					objsLinked++;
+				
 				}
 			}
 		} else {
